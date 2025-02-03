@@ -1,0 +1,46 @@
+name: Deploy site
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository
+      - uses: actions/checkout@v3
+
+      # Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: yarn install
+
+      # Build the static site
+      - name: Build site
+        run: yarn build
+
+      # List current directory
+      - name: List current directory
+        run: ls -la
+
+      # List files in build directory
+      - name: List files in build directory
+        run: ls -la ./build
+
+      # Deploy the contents of the build directory to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
